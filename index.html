@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garage Legends</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =================== PAGINA DE LOGIN =================== -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">GARAGE<span>LEGENDS</span></div>
+    <div class="login-sub">Catálogo de Ícones Automotivos</div>
+    <div class="login-form">
+      <div class="login-error" id="loginError">Usuário ou senha incorretos.</div>
+      <div class="form-group">
+        <label>Usuário</label>
+        <input type="text" id="loginUser" placeholder="seu usuário" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-login" onclick="doLogin()">Entrar</button>
+      <div class="login-hint">
+        Visitante: <b>user</b> / <b>1234</b><br>
+        Admin: <b>admin</b> / <b>admin123</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== SITE PRINCIPAL =================== -->
+<div id="mainSite">
+  <header>
+    <div class="header-left">
+      <div class="logo">GARAGE<span>LEGENDS</span></div>
+      <nav>
+        <ul>
+          <li><a onclick="scrollToTop()" class="active">Início</a></li>
+          <li><a onclick="scrollToBrands()">Marcas</a></li>
+          <li><a onclick="scrollToCatalog()">Catálogo</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="header-right">
+      <div class="user-badge">
+        Olá, <b id="userNameDisplay"></b>
+        <span class="admin-badge" id="adminBadge" style="display:none">Admin</span>
+      </div>
+      <button class="btn-logout" id="goAdminBtn" style="display:none" onclick="goToAdmin()">Painel Admin</button>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1>A ARTE SOBRE<br><span>QUATRO RODAS</span></h1>
+      <p>Explore os ícones que moldaram gerações</p>
+    </div>
+  </div>
+
+  <!--Seção de Marcas -->
+  <div class="brands-section" id="brandsSection">
+    <div class="section-header">
+      <h2>Explorar por Marca</h2>
+    </div>
+    <div class="brands-grid" id="brandsGrid"></div>
+  </div>
+
+  <!--Carros expandidos de marca -->
+  <div class="brand-section-expand hidden" id="brandExpand">
+    <div class="brand-section-title">
+      <h3 id="brandExpandTitle"></h3>
+      <span class="count-badge" id="brandExpandCount"></span>
+    </div>
+    <div class="cars-grid" id="brandExpandGrid"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Catálogo -->
+  <div class="catalog-section" id="catalogSection">
+    <div class="section-header">
+      <h2>Catálogo Geral</h2>
+    </div>
+    <div class="cars-grid" id="catalogGrid"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 <span>Garage Legends</span> · William dos Santos Arruda · Feito por quem ama o ronco do motor.</p>
+  </footer>
+</div>
+
+<!-- =================== ADMIN PAINEL =================== -->
+<div id="adminPanel">
+  <header>
+    <div class="header-left">
+      <div class="logo">GARAGE<span>LEGENDS</span></div>
+    </div>
+    <div class="header-right">
+      <button class="btn-view-site" onclick="goToSite()">← Ver Site</button>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="admin-header">
+    <div>
+      <h1>PAINEL ADMINISTRATIVO</h1>
+      <p>Gerencie marcas, carros e fotos do catálogo</p>
+    </div>
+  </div>
+
+  <div class="admin-content">
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('brands')">Marcas</button>
+      <button class="admin-tab" onclick="switchAdminTab('cars')">Carros</button>
+    </div>
+
+    <!-- guia marcas -->
+    <div class="admin-panel-section active" id="tab-brands">
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>Adicionar Nova Marca</h3>
+          <div class="form-row">
+            <label>Nome da Marca</label>
+            <input type="text" id="newBrandName" placeholder="ex: Lamborghini">
+          </div>
+          <div class="form-row">
+            <label>Sigla (2-3 letras)</label>
+            <input type="text" id="newBrandSlug" placeholder="ex: LB" maxlength="3">
+          </div>
+          <button class="btn-primary" onclick="addBrand()">Adicionar Marca</button>
+          <div class="success-msg" id="brandSuccess">Marca adicionada com sucesso!</div>
+        </div>
+        <div class="admin-card">
+          <h3>Marcas Cadastradas</h3>
+          <ul class="admin-list" id="adminBrandsList"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- guia carros -->
+    <div class="admin-panel-section" id="tab-cars">
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>Adicionar Novo Carro</h3>
+          <div class="form-row">
+            <label>Marca</label>
+            <select id="newCarBrand"></select>
+          </div>
+          <div class="form-row">
+            <label>Nome do Carro</label>
+            <input type="text" id="newCarName" placeholder="ex: Aventador SVJ">
+          </div>
+          <div class="form-row">
+            <label>Descrição</label>
+            <textarea id="newCarDesc" rows="3" placeholder="História e características do carro..."></textarea>
+          </div>
+          <div class="form-row">
+            <label>Motor</label>
+            <input type="text" id="newCarMotor" placeholder="ex: 6.5L V12 N/A">
+          </div>
+          <div class="form-row">
+            <label>Potência</label>
+            <input type="text" id="newCarPower" placeholder="ex: 770 cv">
+          </div>
+          <div class="form-row">
+            <label>0-100 km/h</label>
+            <input type="text" id="newCarSpeed" placeholder="ex: 2.8s">
+          </div>
+          <div class="form-row">
+            <label>Ano de Produção</label>
+            <input type="text" id="newCarYear" placeholder="ex: 2019-2022">
+          </div>
+          <div class="form-row">
+            <label>URL da Foto Principal</label>
+            <input type="text" id="newCarImg" placeholder="https://...">
+          </div>
+          <button class="btn-primary" onclick="addCar()">Adicionar Carro</button>
+          <div class="success-msg" id="carSuccess">Carro adicionado com sucesso!</div>
+        </div>
+        <div class="admin-card" style="overflow:hidden;">
+          <h3>Carros Cadastrados</h3>
+          <div class="admin-cars-list" id="adminCarsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CARROS MODAL =================== -->
+<div class="modal-overlay" id="carModal" onclick="handleModalClick(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-inner">
+      <div class="modal-gallery">
+        <img class="modal-gallery-img" id="modalImg" src="" alt="">
+        <div class="gallery-controls">
+          <div class="gallery-arrows">
+            <button class="gallery-btn" onclick="changeImg(-1)">&#10094;</button>
+            <button class="gallery-btn" onclick="changeImg(1)">&#10095;</button>
+          </div>
+          <div class="gallery-dots" id="galleryDots"></div>
+        </div>
+      </div>
+      <div class="modal-details">
+        <div class="modal-brand-tag" id="modalBrand"></div>
+        <h2 id="modalTitle"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+        <div class="specs-grid">
+          <div class="spec-item"><div class="spec-label">Motor</div><div class="spec-value" id="specMotor">-</div></div>
+          <div class="spec-item"><div class="spec-label">Potência</div><div class="spec-value" id="specPower">-</div></div>
+          <div class="spec-item"><div class="spec-label">0-100 km/h</div><div class="spec-value" id="specSpeed">-</div></div>
+          <div class="spec-item"><div class="spec-label">Ano</div><div class="spec-value" id="specYear">-</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
